@@ -1,22 +1,9 @@
-// todo case matching?
-
 const americanOnly = require('./american-only.js');
 const americanToBritishSpelling = require('./american-to-british-spelling.js');
 const americanToBritishTitles = require("./american-to-british-titles.js")
 const britishOnly = require('./british-only.js')
-
-let britishToAmericanSpelling = {};
-for (const w in americanToBritishSpelling) {
-  if (americanToBritishSpelling.hasOwnProperty(w)) {
-    britishToAmericanSpelling[americanToBritishSpelling[w]] = w;
-  }
-}
-let britishToAmericanTitles = {};
-for (const w in americanToBritishTitles) {
-  if (americanToBritishTitles.hasOwnProperty(w)) {
-    britishToAmericanTitles[americanToBritishTitles[w]] = w;
-  }
-}
+const britishToAmericanSpelling = reverseObj(americanToBritishSpelling);
+const britishToAmericanTitles = reverseObj(americanToBritishTitles);
 
 const dicts = {
   a2b: {
@@ -39,6 +26,16 @@ const dicts = {
   }
 }
 
+function reverseObj(obj) {
+  let res = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      res[obj[key]] = key;
+    }
+  }
+  return res;
+}
+
 function highlight(str) {
   if (!str) return str;
   return `<span class="highlight">${str}</span>`;
@@ -51,7 +48,7 @@ class Translator {
   }
 
   translate(str) {
-    //console.time('test');
+    console.time('test');
     let res = str.trim();
     const lowerCase = res.toLowerCase();
     // translated unique words
@@ -67,7 +64,8 @@ class Translator {
         if (this.locale = 'a2b') {
           regexStr = regexStr.replace('.\\b', '\\.');
         }
-        const translated = this.dict.title[w].replace(/^./, match => match.toUpperCase());
+        const [first, ...rest] = [...this.dict.title[w]];
+        const translated = [first.toUpperCase(), ...rest].join('');
         res = res.replace(new RegExp(regexStr, 'gi'), highlight(translated));
       }
     }
@@ -81,7 +79,7 @@ class Translator {
     res = res.replace(this.dict.timeformat.regex, (match, p1, p2) => {
       return highlight([p1, this.dict.timeformat.to, p2].join(''));
     });
-    //console.timeEnd('test');
+    console.timeEnd('test');
     return res;
   }
 }
