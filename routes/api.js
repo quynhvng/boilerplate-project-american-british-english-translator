@@ -4,7 +4,8 @@ const Translator = require('../components/translator.js');
 
 module.exports = function (app) {
   
-  const translator = new Translator();
+  const aToB = new Translator('aToB');
+  const bToA = new Translator('bToA');
 
   app.route('/api/translate')
     .post((req, res, next) => {
@@ -21,10 +22,10 @@ module.exports = function (app) {
       let translation;
       switch (locale) {
         case 'american-to-british':
-          translation = translator.aToB(text);
+          translation = aToB.translate(text);
           break;
         case 'british-to-american':
-          translation = translator.bToA(text);
+          translation = bToA(text);
           break;
         default:
           res.json({ error: 'Invalid value for locale field' });
