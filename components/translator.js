@@ -37,7 +37,7 @@ function reverseObj(obj) {
 }
 
 function highlight(str) {
-  if (!str) return str;
+  if (!str || str == '') return str;
   return `<span class="highlight">${str}</span>`;
 }
 
@@ -48,7 +48,7 @@ class Translator {
   }
 
   translate(str) {
-    console.time('test');
+    //console.time('test');
     let res = str.trim();
     const lowerCase = res.toLowerCase();
     // translated unique words
@@ -79,7 +79,7 @@ class Translator {
     res = res.replace(this.dict.timeformat.regex, (match, p1, p2) => {
       return highlight([p1, this.dict.timeformat.to, p2].join(''));
     });
-    console.timeEnd('test');
+    //console.timeEnd('test');
     return res;
   }
 }
